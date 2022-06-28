@@ -3,10 +3,11 @@ import logo from './logo.svg';
 import './App.css';
 
 function App(props) {
-  console.log(props);
+  const subject = props.subject;
   return (
     //return statement
     <>
+    <h1>{subject}</h1>
     </>
   );
 }
