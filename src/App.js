@@ -14,7 +14,6 @@ function App(props) {
       return task;
     });
     setTasks(updatedTasks);
-    console.log(tasks);
   }
 
   function deleteTask(id) {
