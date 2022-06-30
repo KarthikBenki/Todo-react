@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import FilterButton from "./components/FilterButton";
 import Form from "./components/Form";
 import Todo from "./components/Todo";
 import { nanoid } from "nanoid";
+
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 const FILTER_MAP = {
   All: () => true,
@@ -39,9 +47,9 @@ function App(props) {
     });
     setTasks(editedTaskList);
   };
-/**
- * the tasklist is first filterd according to the filter button clicked
- */
+  /**
+   * the tasklist is first filterd according to the filter button clicked
+   */
   const taskList = tasks.filter(FILTER_MAP[filter]).map((task) => {
     return (
       <Todo
@@ -73,13 +81,22 @@ function App(props) {
     setTasks([...tasks, newTask]);
   }
 
+  const listHeadingRef = useRef(null);
+  const prevTaskLength = usePrevious(tasks.length);
+  useEffect(() => {
+    if (tasks.length - prevTaskLength===-1) {
+      listHeadingRef.current.focus();
+    }
+  },[prevTaskLength,tasks.length]);
   return (
     <div className="todoapp stack-large">
       <h1>ToDo App</h1>
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">{filterList}</div>
-
-      <h2 id="list-heading">{headingText}</h2>
+      {/* Heading elements like our <h2> are not usually focusable. This isn't a problem — we can make any element programmatically focusable by adding the attribute tabindex="-1" to it. This means only focusable with JavaScript. You can't press Tab to focus on an element with a tabindex of -1 the same way you could do with a <button> or <a> element (this can be done using tabindex="0", but that's not really appropriate in this case). */}
+      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>
+        {headingText}
+      </h2>
 
       <ul
         role="list"
